@@ -1,10 +1,3 @@
-/*
-
-Created by:
-Zack Rauen
-
-*/
-
 var BlockVShaderID = "vertexShader";
 
 var BlockData = {
@@ -47,7 +40,7 @@ var Block = function (gl) {
 	this.buffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, this.buffer );
 	gl.bufferData( gl.ARRAY_BUFFER,	flatten(this.points), gl.STATIC_DRAW );
-	
+
 	this.attachShaders();
 }
 
@@ -55,11 +48,11 @@ Block.prototype.attachShaders = function() {
 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, document.getElementById(BlockVShaderID).text);
     gl.compileShader(vertexShader);
-	
+
 	var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragShader, document.getElementById(this.blockData.color).text );
 	gl.compileShader(fragShader);
-	
+
 	this.shaderProgram = gl.createProgram();
 	this.gl.attachShader(this.shaderProgram, vertexShader);
     this.gl.attachShader(this.shaderProgram, fragShader);
@@ -70,7 +63,7 @@ Block.prototype.attachVariables = function() {
 	var myPosition = this.gl.getAttribLocation(this.shaderProgram, "myPosition");
 	this.gl.vertexAttribPointer( myPosition, 2, this.gl.FLOAT, false, 0, 0 );
 	this.gl.enableVertexAttribArray( myPosition );
-	
+
 	this.xshiftLoc = this.gl.getUniformLocation(this.shaderProgram,"xshift");
 	this.yshiftLoc = this.gl.getUniformLocation(this.shaderProgram,"yshift");
 }
