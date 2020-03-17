@@ -67,6 +67,8 @@ var id_y = 2;
 
 var modelViewMatrixLoc, projectionMatrixLoc;
 var eye;
+const at = vec3(0.0, 0.0, 0.0);
+const up = vec3(0.0, 1.0, 0.0);
 const angle_idx = [
   [
     [-Math.PI / 4, -Math.PI / 4],
