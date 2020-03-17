@@ -1,10 +1,3 @@
-/*
-
-Created by:
-Zack Rauen
-
-*/
-
 var BlockVShaderID = "vertexShader";
 
 var BlockData = {
