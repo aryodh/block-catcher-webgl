@@ -30,7 +30,7 @@ var flag = true;
 var program;
 var canvas, render, gl;
 
-var bezier = function(u) {
+var bezier = function (u) {
   var b = new Array(4);
   var a = 1 - u;
   b[3] = a * a * a;
@@ -40,7 +40,7 @@ var bezier = function(u) {
   return b;
 };
 
-var nbezier = function(u) {
+var nbezier = function (u) {
   var b = [];
   b.push(3 * u * u);
   b.push(3 * u * (2 - 3 * u));
@@ -69,7 +69,8 @@ onload = function init() {
   for (j = 0; j < 3; j++) sum[j] /= 306;
   for (var i = 0; i < 306; i++)
     for (j = 0; j < 2; j++) vertices[i][j] -= sum[j] / 2;
-  for (var i = 0; i < 306; i++) for (j = 0; j < 3; j++) vertices[i][j] *= 2;
+  for (var i = 0; i < 306; i++)
+    for (j = 0; j < 3; j++) vertices[i][j] *= 2;
 
   var h = 1.0 / numDivisions;
 
@@ -150,16 +151,16 @@ onload = function init() {
         ndata[i][j] = normalize(vec4(temp[0], temp[1], temp[2], 0));
       }
 
-    document.getElementById("ButtonX").onclick = function() {
+    document.getElementById("ButtonX").onclick = function () {
       axis = xAxis;
     };
-    document.getElementById("ButtonY").onclick = function() {
+    document.getElementById("ButtonY").onclick = function () {
       axis = yAxis;
     };
-    document.getElementById("ButtonZ").onclick = function() {
+    document.getElementById("ButtonZ").onclick = function () {
       axis = zAxis;
     };
-    document.getElementById("ButtonT").onclick = function() {
+    document.getElementById("ButtonT").onclick = function () {
       flag = !flag;
     };
 
@@ -259,7 +260,7 @@ var flag9 = true;
 var flag10 = true;
 var flag11 = true;
 var flag12 = true;
-var render = function() {
+var render = function () {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   if (flag) {
