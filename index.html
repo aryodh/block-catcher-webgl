@@ -1,132 +1,180 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Block Catcher</title>
 
-<head>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-	<title>Block Catcher</title>
+    <script id="vertexShader" type="x-shader/x-vertex">
 
-	<script id="vertexShader" type="x-shader/x-vertex">
+      attribute vec4 myPosition;
 
-		attribute vec4 myPosition;
+            				uniform float xshift;
+            				uniform float yshift;
+            				mat3 Mtrans;
 
-        				uniform float xshift;
-        				uniform float yshift;
-        				mat3 Mtrans;
+                    void main() {
+              				vec3 vi;
+              				vi[0] = myPosition.x;
+              				vi[1] = myPosition.y;
+              				vi[2] = 1.0;
+              				Mtrans = mat3(1,0,0,
+              							  0,1,0,
+              							  xshift,yshift,1);
+              					vi = Mtrans * vi;
+                                  gl_PointSize = 1.0;
+                                  gl_Position.x = vi[0];
+              					gl_Position.y = vi[1];
+              					gl_Position.z = 0.0;
+              					gl_Position.w = 1.0;
+                    }
+    </script>
+    <script id="green" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4(0.5, 1.0, 0.2, 1.0 );
+                    }
+    </script>
+    <script id="yellow" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 1.0, 1.0, 0.3, 1.0 );
+                    }
+    </script>
+    <script id="pink" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 1.0, 0.3, 1.0, 1.0 );
+                    }
+    </script>
+    <script id="orange" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 1.0, 0.6, 0.0, 1.0 );
+                    }
+    </script>
+    <script id="purple" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 0.6, 0.2, 0.8, 1.0 );
+                    }
+    </script>
+    <script id="red" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+                    }
+    </script>
+    <script id="blue" type="x-shader/x-fragment">
+      void main() {
+      			      	gl_FragColor = vec4( 0.0, 0.0, 1.0, 1.0 );
+                    }
+    </script>
+    <script id="white" type="x-shader/x-fragment">
+      void main() {
+      				      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+                    }
+    </script>
 
-                void main() {
-          				vec3 vi;
-          				vi[0] = myPosition.x;
-          				vi[1] = myPosition.y;
-          				vi[2] = 1.0;
-          				Mtrans = mat3(1,0,0,
-          							  0,1,0,
-          							  xshift,yshift,1);
-          					vi = Mtrans * vi;
-                              gl_PointSize = 1.0;
-                              gl_Position.x = vi[0];
-          					gl_Position.y = vi[1];
-          					gl_Position.z = 0.0;
-          					gl_Position.w = 1.0;
-                }
+    <script type="text/javascript" src="Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="Common/initShaders.js"></script>
+    <script type="text/javascript" src="Common/MV.js"></script>
 
-            </script>
-	<script id="green" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4(0.5, 1.0, 0.2, 1.0 );
-                }
-            </script>
-	<script id="yellow" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 1.0, 1.0, 0.3, 1.0 );
-                }
-            </script>
-	<script id="pink" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 1.0, 0.3, 1.0, 1.0 );
-                }
-            </script>
-	<script id="orange" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 1.0, 0.6, 0.0, 1.0 );
-                }
-            </script>
-	<script id="purple" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 0.6, 0.2, 0.8, 1.0 );
-                }
-            </script>
-	<script id="red" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
-                }
-            </script>
-	<script id="blue" type="x-shader/x-fragment">
-		void main() {
-					      	gl_FragColor = vec4( 0.0, 0.0, 1.0, 1.0 );
-                }
-            </script>
-	<script id="white" type="x-shader/x-fragment">
-		void main() {
-						      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
-                }
-            </script>
+    <script type="text/javascript" src="Player.js"></script>
+    <script type="text/javascript" src="Block.js"></script>
+    <script type="text/javascript" src="game.js"></script>
+    <style>
+      html {
+        width: 512px;
+        margin: 10px auto 0px auto;
+      }
 
-	<script type="text/javascript" src="Common/webgl-utils.js"></script>
-	<script type="text/javascript" src="Common/initShaders.js"></script>
-	<script type="text/javascript" src="Common/MV.js"></script>
+      canvas {
+        border: 3px solid black;
+      }
 
-	<script type="text/javascript" src="Player.js"></script>
-	<script type="text/javascript" src="Block.js"></script>
-	<script type="text/javascript" src="game.js"></script>
-	<style>
-		html {
-			width: 512px;
-			margin: 10px auto 0px auto;
-			font-family: verdana, arial, sans-serif;
-		}
+      .wide {
+        width: 512px;
+        text-align: center;
+      }
 
-		canvas {
-			border: 3px solid black;
-		}
+      legend {
+        font-weight: bold;
+      }
+      body {
+        font-family: "Lato", sans-serif;
+      }
 
-		.wide {
-			width: 512px;
-			text-align: center;
-		}
+      .sidenav {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        color: white;
+        overflow-x: hidden;
+        padding-top: 20px;
+      }
 
-		legend {
-			font-weight: bold;
-		}
-	</style>
-</head>
+      .sidenav a {
+        padding: 6px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+      }
 
-<body onload="initializeGame()" onkeydown="keyDown(event)" onkeyup="keyUp(event)">
-	<h2 class="wide">Block Catcher</h2>
-	<canvas id="gl-canvas" width="512" height="512"></canvas>
-	<br />
-	<select id="mymenu" size="4">
-		<option value="0">Pink</option>
-		<option value="1">Yellow</option>
-		<option value="2">Orange</option>
-		<option value="3">Purple</option>
-	</select>
-	<div class="wide"><span id="play">Press SPACE to play!</span></div><br />
-	Your score: <span id="score">0</span><br />
-	High score: <span id="highScore"></span><br />
-	Time remaining: <span id="time">01:00</span><br />
-	Game Status: <span id="status">Not Started</span><br />
-	<br />
-	<div>
-		<fieldset>
-			<legend>Controls & Scoring</legend>
-			Try to get 500 points before time runs out!<br /><br />
-			Move Player Bar Left/Right - Left/Right Arrow Keys<br />
-			Start Game - SPACE<br /><br />
-			Red Blocks : -5 points<br />
-			Blue Blocks : 5 points<br />
-			White Blocks : 25 points
-		</fieldset>
+      .sidenav a:hover {
+        color: #f1f1f1;
+      }
 
-</body>
+      .main {
+        margin-left: 160px; /* Same as the width of the sidenav */
+        font-size: 20px; /* Increased text to enable scrolling */
+        padding: 0px 10px;
+      }
 
+      @media screen and (max-height: 450px) {
+        .sidenav {
+          padding-top: 15px;
+        }
+        .sidenav a {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    onload="initializeGame()"
+    onkeydown="keyDown(event)"
+    onkeyup="keyUp(event)"
+  >
+    <div class="sidenav">
+      <label for="mymenu">Choose a color:</label>
+
+      <select id="mymenu">
+        <option value="0">Pink</option>
+        <option value="1">Yellow</option>
+        <option value="2">Orange</option>
+        <option value="3">Purple</option>
+      </select>
+      <fieldset>
+        <legend>Controls & Scoring</legend>
+        Try to get 500 points before time runs out!<br /><br />
+        Move Player Bar Left/Right - Left/Right Arrow Keys<br />
+        Start Game - SPACE<br /><br />
+        Red Blocks : -5 points<br />
+        Blue Blocks : 5 points<br />
+        White Blocks : 25 points
+      </fieldset>
+    </div>
+    <div class="main">
+      <h2 class="wide">Block Catcher</h2>
+      <canvas id="gl-canvas" width="512" height="512"></canvas>
+      <br />
+      <div class="wide"><span id="play">Press SPACE to play!</span></div>
+      <br />
+      Your score: <span id="score">0</span><br />
+      High score: <span id="highScore"></span><br />
+      Time remaining: <span id="time">01:00</span><br />
+      Game Status: <span id="status">Not Started</span><br />
+      <br />
+    </div>
+  </body>
 </html>
