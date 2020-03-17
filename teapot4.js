@@ -227,19 +227,6 @@ onload = function init() {
         ndata[i][j] = normalize(vec4(temp[0], temp[1], temp[2], 0));
       }
 
-    document.getElementById("ButtonX").onclick = function() {
-      axis = xAxis;
-    };
-    document.getElementById("ButtonY").onclick = function() {
-      axis = yAxis;
-    };
-    document.getElementById("ButtonZ").onclick = function() {
-      axis = zAxis;
-    };
-    document.getElementById("ButtonT").onclick = function() {
-      flag = !flag;
-    };
-
     for (var i = 0; i < numDivisions; i++)
       for (var j = 0; j < numDivisions; j++) {
         points.push(data[i][j]);
@@ -282,12 +269,6 @@ onload = function init() {
   gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vNormal);
 
-  projectionMatrix = ortho(-4, 4, -4, 4, -200, 200);
-  gl.uniformMatrix4fv(
-    gl.getUniformLocation(program, "projectionMatrix"),
-    false,
-    flatten(projectionMatrix)
-  );
   normalMatrixLoc = gl.getUniformLocation(program, "normalMatrix");
 
   var lightPosition = vec4(0.0, 0.0, 20.0, 0.0);
@@ -487,7 +468,7 @@ var render = function() {
     modelViewMatrix,
     translate(xTranslation, yTranslation, zTranslation)
   );
-  projectionMatrix = perspective(fovy, aspect, near, far);
+  // projectionMatrix = perspective(fovy, aspect, near, far);
   // projectionMatrix = ortho(-4, -4, -4, -4, -200, 200);
 
   gl.uniformMatrix4fv(
@@ -495,11 +476,17 @@ var render = function() {
     false,
     flatten(modelViewMatrix)
   );
+  projectionMatrix = ortho(-4, 4, -4, 4, -200, 200);
   gl.uniformMatrix4fv(
     gl.getUniformLocation(program, "projectionMatrix"),
     false,
-    flatten(modelViewMatrix)
+    flatten(projectionMatrix)
   );
+  // gl.uniformMatrix4fv(
+  //   gl.getUniformLocation(program, "projectionMatrix"),
+  //   false,
+  //   flatten(modelViewMatrix)
+  // );
   normalMatrix = [
     vec3(modelViewMatrix[0][0], modelViewMatrix[0][1], modelViewMatrix[0][2]),
     vec3(modelViewMatrix[1][0], modelViewMatrix[1][1], modelViewMatrix[1][2]),
