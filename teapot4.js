@@ -7,8 +7,8 @@ var index = 0;
 var points = [];
 var normals = [];
 
-var modelViewMatrix = [];
-var projectionMatrix = [];
+var modelViewMatrix;
+var projectionMatrix;
 
 var normalMatrix, normalMatrixLoc;
 
@@ -20,7 +20,8 @@ var yAxis = 1;
 var zAxis = 2;
 var theta = [0, 0, 0];
 var dTheta = 5.0;
-
+var fovy = 45.0;
+var aspect;
 var xTranslation = 0.0;
 var yTranslation = 0.0;
 var zTranslation = 0.0;
@@ -83,7 +84,7 @@ const angle_idx = [
 var program;
 var canvas, render, gl;
 
-var bezier = function (u) {
+var bezier = function(u) {
   var b = new Array(4);
   var a = 1 - u;
   b[3] = a * a * a;
@@ -93,7 +94,7 @@ var bezier = function (u) {
   return b;
 };
 
-var nbezier = function (u) {
+var nbezier = function(u) {
   var b = [];
   b.push(3 * u * u);
   b.push(3 * u * (2 - 3 * u));
@@ -101,7 +102,82 @@ var nbezier = function (u) {
   b.push(-3 * (1 - u) * (1 - u));
   return b;
 };
+// CHANGED near & far to -2 and 2 so it will show everything
+var near = -2;
+var far = 2;
+var radius = 1;
+var theta = 0.0;
+var phi = 0.0;
+var dr = (5.0 * Math.PI) / 180.0;
 
+var left = -1.0;
+var right = 1.0;
+var ytop = 1.0;
+var bottom = -1.0;
+
+var id_x = 1;
+var id_y = 2;
+
+var modelViewMatrixLoc, projectionMatrixLoc;
+var eye;
+const at = vec3(0.0, 0.0, 0.0);
+const up = vec3(0.0, 1.0, 0.0);
+const angle_idx = [
+  [
+    [-Math.PI / 4, -Math.PI / 4],
+    [-Math.PI / 2, 0.0],
+    [-Math.PI / 4, Math.PI / 4],
+    [-Math.PI / 2, Math.PI / 2],
+    [-Math.PI / 4, (3 * Math.PI) / 4],
+    [-Math.PI / 2, Math.PI],
+    [-Math.PI / 4, (-3 * Math.PI) / 4],
+    [-Math.PI / 2, -Math.PI / 2]
+  ],
+  [
+    [-Math.PI / 4, -Math.PI / 4],
+    [-Math.PI / 2, 0.0],
+    [-Math.PI / 4, Math.PI / 4],
+    [-Math.PI / 2, Math.PI / 2],
+    [-Math.PI / 4, (3 * Math.PI) / 4],
+    [-Math.PI / 2, Math.PI],
+    [-Math.PI / 4, (-3 * Math.PI) / 4],
+    [-Math.PI / 2, -Math.PI / 2]
+  ],
+  [
+    [Math.PI, -Math.PI / 4],
+    [Math.PI, 0.0],
+    [Math.PI, Math.PI / 4],
+    [Math.PI, Math.PI / 2],
+    [Math.PI, (3 * Math.PI) / 4],
+    [Math.PI, Math.PI],
+    [Math.PI, (-3 * Math.PI) / 4],
+    [Math.PI, -Math.PI / 2]
+  ],
+  [
+    [Math.PI / 4, -Math.PI / 4],
+    [Math.PI / 2, 0.0],
+    [Math.PI / 4, Math.PI / 4],
+    [Math.PI / 2, Math.PI / 2],
+    [Math.PI / 4, (3 * Math.PI) / 4],
+    [Math.PI / 2, Math.PI],
+    [Math.PI / 4, (-3 * Math.PI) / 4],
+    [Math.PI / 2, -Math.PI / 2]
+  ],
+  [
+    [Math.PI / 4, -Math.PI / 4],
+    [Math.PI / 2, 0.0],
+    [Math.PI / 4, Math.PI / 4],
+    [Math.PI / 2, Math.PI / 2],
+    [Math.PI / 4, (3 * Math.PI) / 4],
+    [Math.PI / 2, Math.PI],
+    [Math.PI / 4, (-3 * Math.PI) / 4],
+    [Math.PI / 2, -Math.PI / 2]
+  ]
+];
+function changeCameraAngle(t, p) {
+  theta = t;
+  phi = p;
+}
 onload = function init() {
   canvas = document.getElementById("gl-canvas");
 
@@ -115,6 +191,7 @@ onload = function init() {
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
   gl.enable(gl.DEPTH_TEST);
+  aspect = canvas.width / canvas.height;
 
   var sum = [0, 0, 0];
   for (var i = 0; i < 306; i++)
@@ -122,8 +199,7 @@ onload = function init() {
   for (j = 0; j < 3; j++) sum[j] /= 306;
   for (var i = 0; i < 306; i++)
     for (j = 0; j < 2; j++) vertices[i][j] -= sum[j] / 2;
-  for (var i = 0; i < 306; i++)
-    for (j = 0; j < 3; j++) vertices[i][j] *= 2;
+  for (var i = 0; i < 306; i++) for (j = 0; j < 3; j++) vertices[i][j] *= 2;
 
   var h = 1.0 / numDivisions;
 
@@ -204,6 +280,7 @@ onload = function init() {
         ndata[i][j] = normalize(vec4(temp[0], temp[1], temp[2], 0));
       }
 
+<<<<<<< HEAD
     // document.getElementById("ButtonX").onclick = function() {
     //   axis = xAxis;
     // };
@@ -216,6 +293,20 @@ onload = function init() {
     // document.getElementById("ButtonT").onclick = function() {
     //   flag = !flag;
     // };
+=======
+    document.getElementById("ButtonX").onclick = function() {
+      axis = xAxis;
+    };
+    document.getElementById("ButtonY").onclick = function() {
+      axis = yAxis;
+    };
+    document.getElementById("ButtonZ").onclick = function() {
+      axis = zAxis;
+    };
+    document.getElementById("ButtonT").onclick = function() {
+      flag = !flag;
+    };
+>>>>>>> 6fc3b6ff3b797ccb83bf977b04bc00ecb2ca6eaa
 
     for (var i = 0; i < numDivisions; i++)
       for (var j = 0; j < numDivisions; j++) {
@@ -298,60 +389,56 @@ onload = function init() {
     flatten(lightPosition)
   );
   gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
+  modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
+  projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 
-  $(document).keydown(function (e) {
+  $(document).keydown(function(e) {
     if (e.keyCode == 37) {
-        // left
-        changeIndex("x", "-");
+      // left
+      changeIndex("x", "-");
     } else if (e.keyCode == 39) {
-        // right
-        changeIndex("x", "+");
+      // right
+      changeIndex("x", "+");
     } else if (e.keyCode == 38) {
-        // up
-        changeIndex("y", "+");
+      // up
+      changeIndex("y", "+");
     } else if (e.keyCode == 40) {
-        // down
-        changeIndex("y", "-");
+      // down
+      changeIndex("y", "-");
     } else if (e.keyCode == 65) {
-        // down
-        changeCameraAngle(Math.PI, 0.0);
+      // down
+      changeCameraAngle(Math.PI, 0.0);
     }
-});
-
+  });
   render();
 };
-
-
 function changeIndex(idx, sign) {
   console.log(sign);
   if (idx == "y") {
-      if ((id_y == 0 && sign == "-") || (id_y == 4 && sign == "+")) {
-          id_y = id_y;
-      } else {
-          if (sign == "+") {
-              id_y += 1;
-          } else if (sign == "-") {
-              id_y -= 1;
-          }
-      }
-  } else if (idx == "x") {
-      if (id_x == 7 && sign == "+") {
-          id_x = 0;
-      } else if (id_x == 0 && sign == "-") {
-          id_x = 7;
-      } else if (sign == "+") {
-          id_x += 1;
+    if ((id_y == 0 && sign == "-") || (id_y == 4 && sign == "+")) {
+      id_y = id_y;
+    } else {
+      if (sign == "+") {
+        id_y += 1;
       } else if (sign == "-") {
-          id_x -= 1;
+        id_y -= 1;
       }
+    }
+  } else if (idx == "x") {
+    if (id_x == 7 && sign == "+") {
+      id_x = 0;
+    } else if (id_x == 0 && sign == "-") {
+      id_x = 7;
+    } else if (sign == "+") {
+      id_x += 1;
+    } else if (sign == "-") {
+      id_x -= 1;
+    }
   }
-  console.log(id_x, id_y)
+  console.log(id_x, id_y);
   console.log(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
   changeCameraAngle(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
-
 }
-
-
 var flag1 = true;
 var flag2 = true;
 var flag3 = true;
@@ -364,11 +451,10 @@ var flag9 = true;
 var flag10 = true;
 var flag11 = true;
 var flag12 = true;
-var render = function () {
+var render = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   if (flag) {
-    theta[axis] += 0.5;
     if (flag1) {
       if (xTranslation < 2) {
         xTranslation += 0.1;
@@ -455,7 +541,15 @@ var render = function () {
       }
     }
   }
+  eye = vec3(
+    radius * Math.sin(phi),
+    radius * Math.sin(theta),
+    radius * Math.cos(phi)
+  );
 
+  modelViewMatrix = lookAt(eye, at, up);
+
+<<<<<<< HEAD
   eye = vec3(radius * Math.sin(phi), radius * Math.sin(theta),
         radius * Math.cos(phi));
 
@@ -463,17 +557,24 @@ var render = function () {
 
 
   modelViewMatrix = mat4();
+=======
+  // modelViewMatrix = mat4();
+>>>>>>> 6fc3b6ff3b797ccb83bf977b04bc00ecb2ca6eaa
 
   modelViewMatrix = mult(
     modelViewMatrix,
     translate(xTranslation, yTranslation, zTranslation)
   );
+  projectionMatrix = perspective(fovy, aspect, near, far);
+  // projectionMatrix = ortho(-4, -4, -4, -4, -200, 200);
 
-  // modelViewMatrix = mult(modelViewMatrix, rotate(theta[xAxis], [1, 0, 0]));
-  // modelViewMatrix = mult(modelViewMatrix, rotate(theta[yAxis], [0, 1, 0]));
-  // modelViewMatrix = mult(modelViewMatrix, rotate(theta[zAxis], [0, 0, 1]));
   gl.uniformMatrix4fv(
     gl.getUniformLocation(program, "modelViewMatrix"),
+    false,
+    flatten(modelViewMatrix)
+  );
+  gl.uniformMatrix4fv(
+    gl.getUniformLocation(program, "projectionMatrix"),
     false,
     flatten(modelViewMatrix)
   );
@@ -483,6 +584,7 @@ var render = function () {
     vec3(modelViewMatrix[2][0], modelViewMatrix[2][1], modelViewMatrix[2][2])
   ];
   gl.uniformMatrix3fv(normalMatrixLoc, false, flatten(normalMatrix));
+  // gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
   gl.drawArrays(gl.TRIANGLES, 0, index);
   //for(var i=0; i<index; i+=3) gl.drawArrays( gl.LINE_LOOP, i, 3 );
