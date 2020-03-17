@@ -27,6 +27,59 @@ var zTranslation = 0.0;
 
 var flag = true;
 
+const angle_idx = [
+  [
+      [-Math.PI / 4, -Math.PI / 4],
+      [-Math.PI / 2, 0.0],
+      [-Math.PI / 4, Math.PI / 4],
+      [-Math.PI / 2, Math.PI / 2],
+      [-Math.PI / 4, 3 * Math.PI / 4],
+      [-Math.PI / 2, Math.PI],
+      [-Math.PI / 4, -3 * Math.PI / 4],
+      [-Math.PI / 2, -Math.PI / 2]
+  ],
+  [
+      [-Math.PI / 4, -Math.PI / 4],
+      [-Math.PI / 2, 0.0],
+      [-Math.PI / 4, Math.PI / 4],
+      [-Math.PI / 2, Math.PI / 2],
+      [-Math.PI / 4, 3 * Math.PI / 4],
+      [-Math.PI / 2, Math.PI],
+      [-Math.PI / 4, -3 * Math.PI / 4],
+      [-Math.PI / 2, -Math.PI / 2]
+  ],
+  [
+      [Math.PI, -Math.PI / 4],
+      [Math.PI, 0.0],
+      [Math.PI, Math.PI / 4],
+      [Math.PI, Math.PI / 2],
+      [Math.PI, 3 * Math.PI / 4],
+      [Math.PI, Math.PI],
+      [Math.PI, -3 * Math.PI / 4],
+      [Math.PI, -Math.PI / 2]
+  ],
+  [
+      [Math.PI / 4, -Math.PI / 4],
+      [Math.PI / 2, 0.0],
+      [Math.PI / 4, Math.PI / 4],
+      [Math.PI / 2, Math.PI / 2],
+      [Math.PI / 4, 3 * Math.PI / 4],
+      [Math.PI / 2, Math.PI],
+      [Math.PI / 4, -3 * Math.PI / 4],
+      [Math.PI / 2, -Math.PI / 2],
+  ],
+  [
+      [Math.PI / 4, -Math.PI / 4],
+      [Math.PI / 2, 0.0],
+      [Math.PI / 4, Math.PI / 4],
+      [Math.PI / 2, Math.PI / 2],
+      [Math.PI / 4, 3 * Math.PI / 4],
+      [Math.PI / 2, Math.PI],
+      [Math.PI / 4, -3 * Math.PI / 4],
+      [Math.PI / 2, -Math.PI / 2],
+  ],
+];
+
 var program;
 var canvas, render, gl;
 
@@ -246,53 +299,59 @@ onload = function init() {
   );
   gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
 
-  $(document).keydown(function(e) {
-        if (e.keyCode == 49){
-            changeCameraAngle(0.0,0.0);
-        } 
-        else if (e.keyCode == 50){
-            changeCameraAngle(0.0,Math.PI/2);
-        } 
-        else if (e.keyCode == 51){
-            changeCameraAngle(0.0,Math.PI);
-        } 
-        else if (e.keyCode == 52){
-            changeCameraAngle(0.0,-Math.PI/2);
-        } 
-        else if (e.keyCode == 53){
-            changeCameraAngle(Math.PI/2,0.0);
-        } 
-        else if (e.keyCode == 54){
-            changeCameraAngle(-Math.PI/2,0.0);
-        } 
-        else if (e.keyCode == 81){
-            changeCameraAngle(Math.PI/4,-Math.PI/4);
-        } 
-        else if (e.keyCode == 87){
-            changeCameraAngle(Math.PI/4, Math.PI/4);
-        } 
-        else if (e.keyCode == 69){
-            changeCameraAngle(Math.PI/4, 3 * Math.PI/4);
-        } 
-        else if (e.keyCode == 82){
-            changeCameraAngle(Math.PI/4,-3 * Math.PI/4);
-        } 
-        else if (e.keyCode == 84){
-            changeCameraAngle(-Math.PI/4,-Math.PI/4);
-        } 
-        else if (e.keyCode == 89){
-            changeCameraAngle(-Math.PI/4, Math.PI/4);
-        } 
-        else if (e.keyCode == 85){
-            changeCameraAngle(-Math.PI/4,3 * Math.PI/4);
-        } 
-        else if (e.keyCode == 73){
-            changeCameraAngle(-Math.PI/4,-3 * Math.PI/4);
-        }
-    });
+  $(document).keydown(function (e) {
+    if (e.keyCode == 37) {
+        // left
+        changeIndex("x", "-");
+    } else if (e.keyCode == 39) {
+        // right
+        changeIndex("x", "+");
+    } else if (e.keyCode == 38) {
+        // up
+        changeIndex("y", "+");
+    } else if (e.keyCode == 40) {
+        // down
+        changeIndex("y", "-");
+    } else if (e.keyCode == 65) {
+        // down
+        changeCameraAngle(Math.PI, 0.0);
+    }
+});
 
   render();
 };
+
+
+function changeIndex(idx, sign) {
+  console.log(sign);
+  if (idx == "y") {
+      if ((id_y == 0 && sign == "-") || (id_y == 4 && sign == "+")) {
+          id_y = id_y;
+      } else {
+          if (sign == "+") {
+              id_y += 1;
+          } else if (sign == "-") {
+              id_y -= 1;
+          }
+      }
+  } else if (idx == "x") {
+      if (id_x == 7 && sign == "+") {
+          id_x = 0;
+      } else if (id_x == 0 && sign == "-") {
+          id_x = 7;
+      } else if (sign == "+") {
+          id_x += 1;
+      } else if (sign == "-") {
+          id_x -= 1;
+      }
+  }
+  console.log(id_x, id_y)
+  console.log(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
+  changeCameraAngle(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
+
+}
+
+
 var flag1 = true;
 var flag2 = true;
 var flag3 = true;
@@ -397,10 +456,11 @@ var render = function () {
     }
   }
 
-  // eye = vec3(radius*Math.sin(phi), radius*Math.sin(theta),
-  //            radius*Math.cos(phi));
+  eye = vec3(radius * Math.sin(phi), radius * Math.sin(theta),
+        radius * Math.cos(phi));
 
-  // modelViewMatrix = lookAt(eye, at , up);
+  modelViewMatrix = lookAt(eye, at, up);
+
 
   modelViewMatrix = mat4();
 
