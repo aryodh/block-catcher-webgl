@@ -28,47 +28,6 @@ var zTranslation = 0.0;
 
 var flag = true;
 
-var program;
-var canvas, render, gl;
-
-var bezier = function(u) {
-  var b = new Array(4);
-  var a = 1 - u;
-  b[3] = a * a * a;
-  b[2] = 3 * a * a * u;
-  b[1] = 3 * a * u * u;
-  b[0] = u * u * u;
-  return b;
-};
-
-var nbezier = function(u) {
-  var b = [];
-  b.push(3 * u * u);
-  b.push(3 * u * (2 - 3 * u));
-  b.push(3 * (1 - 4 * u + 3 * u * u));
-  b.push(-3 * (1 - u) * (1 - u));
-  return b;
-};
-// CHANGED near & far to -2 and 2 so it will show everything
-var near = -2;
-var far = 2;
-var radius = 1;
-var theta = 0.0;
-var phi = 0.0;
-var dr = (5.0 * Math.PI) / 180.0;
-
-var left = -1.0;
-var right = 1.0;
-var ytop = 1.0;
-var bottom = -1.0;
-
-var id_x = 1;
-var id_y = 2;
-
-var modelViewMatrixLoc, projectionMatrixLoc;
-var eye;
-const at = vec3(0.0, 0.0, 0.0);
-const up = vec3(0.0, 1.0, 0.0);
 const angle_idx = [
   [
     [-Math.PI / 4, -Math.PI / 4],
@@ -121,6 +80,49 @@ const angle_idx = [
     [Math.PI / 2, -Math.PI / 2]
   ]
 ];
+
+var program;
+var canvas, render, gl;
+
+var bezier = function(u) {
+  var b = new Array(4);
+  var a = 1 - u;
+  b[3] = a * a * a;
+  b[2] = 3 * a * a * u;
+  b[1] = 3 * a * u * u;
+  b[0] = u * u * u;
+  return b;
+};
+
+var nbezier = function(u) {
+  var b = [];
+  b.push(3 * u * u);
+  b.push(3 * u * (2 - 3 * u));
+  b.push(3 * (1 - 4 * u + 3 * u * u));
+  b.push(-3 * (1 - u) * (1 - u));
+  return b;
+};
+// CHANGED near & far to -2 and 2 so it will show everything
+var near = -2;
+var far = 2;
+var radius = 1;
+var theta = 0.0;
+var phi = 0.0;
+var dr = (5.0 * Math.PI) / 180.0;
+
+var left = -1.0;
+var right = 1.0;
+var ytop = 1.0;
+var bottom = -1.0;
+
+var id_x = 1;
+var id_y = 2;
+
+var modelViewMatrixLoc, projectionMatrixLoc;
+var eye;
+const at = vec3(0.0, 0.0, 0.0);
+const up = vec3(0.0, 1.0, 0.0);
+
 function changeCameraAngle(t, p) {
   theta = t;
   phi = p;
@@ -462,7 +464,13 @@ var render = function() {
 
   modelViewMatrix = lookAt(eye, at, up);
 
-  // modelViewMatrix = mat4();
+  eye = vec3(
+    radius * Math.sin(phi),
+    radius * Math.sin(theta),
+    radius * Math.cos(phi)
+  );
+
+  modelViewMatrix = lookAt(eye, at, up);
 
   modelViewMatrix = mult(
     modelViewMatrix,
