@@ -150,18 +150,18 @@ onload = function init() {
         ndata[i][j] = normalize(vec4(temp[0], temp[1], temp[2], 0));
       }
 
-    document.getElementById("ButtonX").onclick = function() {
-      axis = xAxis;
-    };
-    document.getElementById("ButtonY").onclick = function() {
-      axis = yAxis;
-    };
-    document.getElementById("ButtonZ").onclick = function() {
-      axis = zAxis;
-    };
-    document.getElementById("ButtonT").onclick = function() {
-      flag = !flag;
-    };
+    // document.getElementById("ButtonX").onclick = function() {
+    //   axis = xAxis;
+    // };
+    // document.getElementById("ButtonY").onclick = function() {
+    //   axis = yAxis;
+    // };
+    // document.getElementById("ButtonZ").onclick = function() {
+    //   axis = zAxis;
+    // };
+    // document.getElementById("ButtonT").onclick = function() {
+    //   flag = !flag;
+    // };
 
     for (var i = 0; i < numDivisions; i++)
       for (var j = 0; j < numDivisions; j++) {
@@ -244,6 +244,51 @@ onload = function init() {
     flatten(lightPosition)
   );
   gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
+
+  $(document).keydown(function(e) {
+        if (e.keyCode == 49){
+            changeCameraAngle(0.0,0.0);
+        } 
+        else if (e.keyCode == 50){
+            changeCameraAngle(0.0,Math.PI/2);
+        } 
+        else if (e.keyCode == 51){
+            changeCameraAngle(0.0,Math.PI);
+        } 
+        else if (e.keyCode == 52){
+            changeCameraAngle(0.0,-Math.PI/2);
+        } 
+        else if (e.keyCode == 53){
+            changeCameraAngle(Math.PI/2,0.0);
+        } 
+        else if (e.keyCode == 54){
+            changeCameraAngle(-Math.PI/2,0.0);
+        } 
+        else if (e.keyCode == 81){
+            changeCameraAngle(Math.PI/4,-Math.PI/4);
+        } 
+        else if (e.keyCode == 87){
+            changeCameraAngle(Math.PI/4, Math.PI/4);
+        } 
+        else if (e.keyCode == 69){
+            changeCameraAngle(Math.PI/4, 3 * Math.PI/4);
+        } 
+        else if (e.keyCode == 82){
+            changeCameraAngle(Math.PI/4,-3 * Math.PI/4);
+        } 
+        else if (e.keyCode == 84){
+            changeCameraAngle(-Math.PI/4,-Math.PI/4);
+        } 
+        else if (e.keyCode == 89){
+            changeCameraAngle(-Math.PI/4, Math.PI/4);
+        } 
+        else if (e.keyCode == 85){
+            changeCameraAngle(-Math.PI/4,3 * Math.PI/4);
+        } 
+        else if (e.keyCode == 73){
+            changeCameraAngle(-Math.PI/4,-3 * Math.PI/4);
+        }
+    });
 
   render();
 };
@@ -350,6 +395,11 @@ var render = function() {
       }
     }
   }
+
+  // eye = vec3(radius*Math.sin(phi), radius*Math.sin(theta),
+  //            radius*Math.cos(phi));
+
+  // modelViewMatrix = lookAt(eye, at , up);
 
   modelViewMatrix = mat4();
 
