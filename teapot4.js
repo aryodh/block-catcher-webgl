@@ -40,16 +40,6 @@ const angle_idx = [
     [-Math.PI / 2, -Math.PI / 2]
   ],
   [
-    [-Math.PI / 4, -Math.PI / 4],
-    [-Math.PI / 2, 0.0],
-    [-Math.PI / 4, Math.PI / 4],
-    [-Math.PI / 2, Math.PI / 2],
-    [-Math.PI / 4, (3 * Math.PI) / 4],
-    [-Math.PI / 2, Math.PI],
-    [-Math.PI / 4, (-3 * Math.PI) / 4],
-    [-Math.PI / 2, -Math.PI / 2]
-  ],
-  [
     [Math.PI, -Math.PI / 4],
     [Math.PI, 0.0],
     [Math.PI, Math.PI / 4],
@@ -69,22 +59,12 @@ const angle_idx = [
     [Math.PI / 4, (-3 * Math.PI) / 4],
     [Math.PI / 2, -Math.PI / 2]
   ],
-  [
-    [Math.PI / 4, -Math.PI / 4],
-    [Math.PI / 2, 0.0],
-    [Math.PI / 4, Math.PI / 4],
-    [Math.PI / 2, Math.PI / 2],
-    [Math.PI / 4, (3 * Math.PI) / 4],
-    [Math.PI / 2, Math.PI],
-    [Math.PI / 4, (-3 * Math.PI) / 4],
-    [Math.PI / 2, -Math.PI / 2]
-  ]
 ];
 
 var program;
 var canvas, render, gl;
 
-var bezier = function(u) {
+var bezier = function (u) {
   var b = new Array(4);
   var a = 1 - u;
   b[3] = a * a * a;
@@ -94,7 +74,7 @@ var bezier = function(u) {
   return b;
 };
 
-var nbezier = function(u) {
+var nbezier = function (u) {
   var b = [];
   b.push(3 * u * u);
   b.push(3 * u * (2 - 3 * u));
@@ -115,8 +95,8 @@ var right = 1.0;
 var ytop = 1.0;
 var bottom = -1.0;
 
-var id_x = 1;
-var id_y = 2;
+var id_x = 0;
+var id_y = 1;
 
 var modelViewMatrixLoc, projectionMatrixLoc;
 var eye;
@@ -148,7 +128,8 @@ onload = function init() {
   for (j = 0; j < 3; j++) sum[j] /= 306;
   for (var i = 0; i < 306; i++)
     for (j = 0; j < 2; j++) vertices[i][j] -= sum[j] / 2;
-  for (var i = 0; i < 306; i++) for (j = 0; j < 3; j++) vertices[i][j] *= 2;
+  for (var i = 0; i < 306; i++)
+    for (j = 0; j < 3; j++) vertices[i][j] *= 2;
 
   var h = 1.0 / numDivisions;
 
@@ -307,7 +288,8 @@ onload = function init() {
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 
-  $(document).keydown(function(e) {
+  // event listener untuk arah panah
+  $(document).keydown(function (e) {
     if (e.keyCode == 37) {
       // left
       changeIndex("x", "-");
@@ -327,33 +309,8 @@ onload = function init() {
   });
   render();
 };
-function changeIndex(idx, sign) {
-  console.log(sign);
-  if (idx == "y") {
-    if ((id_y == 0 && sign == "-") || (id_y == 4 && sign == "+")) {
-      id_y = id_y;
-    } else {
-      if (sign == "+") {
-        id_y += 1;
-      } else if (sign == "-") {
-        id_y -= 1;
-      }
-    }
-  } else if (idx == "x") {
-    if (id_x == 7 && sign == "+") {
-      id_x = 0;
-    } else if (id_x == 0 && sign == "-") {
-      id_x = 7;
-    } else if (sign == "+") {
-      id_x += 1;
-    } else if (sign == "-") {
-      id_x -= 1;
-    }
-  }
-  console.log(id_x, id_y);
-  console.log(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
-  changeCameraAngle(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
-}
+
+// Untuk merender dan menggerakan teapot
 var flag1 = true;
 var flag2 = true;
 var flag3 = true;
@@ -366,7 +323,7 @@ var flag9 = true;
 var flag10 = true;
 var flag11 = true;
 var flag12 = true;
-var render = function() {
+var render = function () {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   if (flag) {
@@ -507,3 +464,32 @@ var render = function() {
   //for(var i=0; i<index; i+=3) gl.drawArrays( gl.LINE_LOOP, i, 3 );
   requestAnimFrame(render);
 };
+
+// fungsi mengubah index untuk posisi kamera
+function changeIndex(idx, sign) {
+  console.log(sign);
+  // cek terhadap x atau y
+  if (idx == "y") {
+    // cek apakah sudah dibawah atau diatas
+    if ((id_y == 0 && sign == "-") || (id_y == 2 && sign == "+")) {
+      id_y = id_y;
+    } else {
+      if (sign == "+") {
+        id_y += 1;
+      } else if (sign == "-") {
+        id_y -= 1;
+      }
+    }
+  } else if (idx == "x") {
+    if (id_x == 7 && sign == "+") {
+      id_x = 0;
+    } else if (id_x == 0 && sign == "-") {
+      id_x = 7;
+    } else if (sign == "+") {
+      id_x += 1;
+    } else if (sign == "-") {
+      id_x -= 1;
+    }
+  }
+  changeCameraAngle(angle_idx[id_y][id_x][0], angle_idx[id_y][id_x][1]);
+}
